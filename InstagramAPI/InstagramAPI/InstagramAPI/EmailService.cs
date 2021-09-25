@@ -20,7 +20,7 @@ namespace InstagramAPI
             using (var client = new SmtpClient())
             {
                 await client.ConnectAsync("smtp.mail.ru", 465, true);
-                await client.AuthenticateAsync("ilya-lyapin@mail.ru", "vfhn20020307ujl");
+                await client.AuthenticateAsync("ilya-lyapin@mail.ru", "delet my password))");
                 await client.SendAsync(emailMessage);
 
                 await client.DisconnectAsync(true);
