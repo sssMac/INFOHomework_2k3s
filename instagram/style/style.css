@@ -1,0 +1,224 @@
+.all {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.Centre {
+	display: flex;
+	justify-content:center;
+	align-items: center;
+	margin: 26px auto 10px 422px;
+	width: 935px;
+	height: 792px;
+	padding-bottom: 27px;
+
+}
+
+.phone {
+	display: block;
+	position: relative;
+
+}
+
+.AllBlock{
+	display: flex;
+	flex-direction: column;
+}
+
+.block1 {
+
+	display: flex;
+	position: relative;
+	border: 1px solid rgb(219, 219, 219);
+	width: 348px;
+	height: 378px;
+	flex-direction: column;
+	align-items: unsafe center;
+	
+}
+
+#logo {
+	width: 175px;
+	height: 110px;
+	margin: 3px auto 3px ;
+	margin-right: 87px;
+}
+
+#mail, #password {
+	width: 262px ;
+	height: 35px;
+	margin: 3px auto 3px;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+	font-size: 12px;
+	border: 1px solid rgb(219, 219, 219);
+	border-radius: 2px;
+	padding-left: 10px;
+
+}
+
+#mail:focus, #password:focus {
+	outline: 0;
+	outline-offset: 0;
+	border: 1px solid gray;
+}
+
+
+a.button {
+	display: inline-block;
+	background: #2196f3;
+	color: #fff;
+	padding: 8px;
+	padding-right: 115px;
+	padding-left: 115px;
+	border-radius: 3px;
+	text-decoration: none;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+	font-size: 14px;
+	line-height: 1;
+	font-weight: 600;
+}
+
+div.EntBut {
+	text-align: center;
+	margin: 10px;
+
+}
+.underEnt {
+	display: flex;
+	width: 268;
+	height: 15;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	align-content: space-between;
+	margin: 7px 6px 25px 6px;
+	
+}
+
+.or {
+	position: relative;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;;
+	font-size: 13px;
+	color: rgba(var(--f52,142,142,142),1);
+	font-weight: 600;
+	margin: 0 20px 0 20px
+}
+
+.borL ,.borR {
+	position: relative;
+
+	border-bottom: 1px solid rgb(219, 219, 219);
+	width: 100px;
+}
+
+.Facebook {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	width: 268px;
+	border: none;
+	background: 0;
+	cursor: pointer;
+
+}
+.FBIcon {
+	position: relative;
+	margin: 2px 8px 0 0;
+	width: 16px;
+	height: 16px;
+
+}
+.FB {	
+	position: relative;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;;
+	color: #385185;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.losepass {
+	position: relative;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;;
+	color: #385185;
+	text-decoration: none;
+	font-size: 12px;
+	margin-top: 17px;
+}
+
+.block2 {
+
+	display: flex;
+	position: relative;
+	border: 1px solid rgb(219, 219, 219);
+	width: 348px;
+	height: 60px;
+	justify-content: center;
+	align-items:  center;
+	flex-direction: row;
+	margin-top: 10px;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;;
+	font-size: 14px;
+}
+
+#Reg {
+	color: #2196f3;
+	text-decoration: none;
+	font-weight: 600;
+	margin-left: 5px;
+}
+
+.DownApp{
+	display: flex;
+	position: relative;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;;
+	font-size: 14px;
+	justify-content: center;
+	align-items:  center;
+	margin: 20px 0 20px;
+
+
+}
+
+.App {
+	display: flex;
+	position: relative;
+	justify-content: center;
+	align-items:  center;
+
+}
+
+#ap {
+	width: 136px;
+	height: 40px;
+	margin: 0 4px;
+}
+
+.infblock1 {
+	display: flex;
+	position: relative;
+	width:1500px;
+	justify-content: center;
+	align-items:  center;
+}
+
+.infblock2,.AvPr {
+	display: flex;
+	position: relative;
+	width:1500px;
+	height: 25px;
+	justify-content: center;
+	align-items:  center;
+
+}
+
+.infotext, #infotext {
+	position: relative;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;;
+	color: rgba(var(--f52,142,142,142),1);
+	text-decoration: none;
+	font-size: 12px;
+	margin: 0 8px 0 8px;
+	align-content: space-between;
+}
