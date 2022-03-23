@@ -1,0 +1,253 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace MatStat
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            double[] arr = new double[30]{    10, 10, 11, 11, 11, 12, 13, 14, 14, 15,
+                                        16, 16, 17, 17, 17, 18, 19, 20, 21, 21,
+                                        22, 22, 23, 24, 25, 26, 27, 28, 29, 30  };
+
+
+
+            List<double> niList = new List<double>();
+            int countValue = 30;
+            double xmax = arr.Max();
+            double xmin = arr.Min();
+            double k = Math.Floor(1 + 3.322 * Math.Log10(countValue)); //5
+            var h = (xmax - xmin) / k; //4
+
+
+
+
+            for (int i = 0; i < arr.Length; i++)
+            {
+
+            }
+
+
+
+
+            dataGridView1.Rows.Add(arr.Length);
+
+
+
+            for (int i = 0; i < arr.Length; i++)
+            {
+                dataGridView1.Rows[i].Cells[0].Value = arr[i];
+            }
+
+            double startInt = 0;
+            double endInt = Math.Floor(arr[0]);
+            double xiavg = 0;
+            double ni = 0 ;
+            double xWithWave = 0;
+            double sigma = 0;
+            double gamma = 0.95; // вводится 
+
+            for (int i = 0; i < k; i++)
+            {
+                startInt = endInt;
+                endInt += h;
+                xiavg = (startInt + endInt) / 2;
+                ni = CulculateNi(startInt, endInt, arr);
+                niList.Add(ni);
+                xWithWave += (xiavg * ni) / 30;
+
+
+                dataGridView1.Rows[i].Cells[1].Value = $"{startInt} - {endInt}"; //интервалы
+                dataGridView1.Rows[i].Cells[2].Value = ni; //n итое
+                dataGridView1.Rows[i].Cells[3].Value = xiavg; // xi сред
+            };
+
+            xWithWave = Math.Round(xWithWave, 2);
+            dataGridView1.Rows[7].Cells[2].Value = $"x̃ = {xWithWave}";
+
+            startInt = 0;
+            endInt = Math.Floor(arr[0]);
+            xiavg = 0;
+            ni = 0;
+            sigma = 0;
+            double xXx = 0; // хз как назвать
+            double sigmaSquere = 0;
+
+            for (int i = 0; i < k; i++)
+            {
+                startInt = endInt;
+                endInt += h;
+                ni = CulculateNi(startInt, endInt, arr);
+
+                xiavg = (startInt + endInt) / 2;
+
+                sigma = xiavg - xWithWave;
+                xXx = Math.Round(sigma * sigma, 2);
+                sigmaSquere += (xXx * ni) / 30;
+                dataGridView1.Rows[i].Cells[4].Value = sigma; // sigma
+                dataGridView1.Rows[i].Cells[5].Value = xXx; // sigma
+
+
+            }
+
+            sigmaSquere = Math.Round(sigmaSquere, 2);
+            dataGridView1.Rows[8].Cells[2].Value = $"sigma^2 = {sigmaSquere}";
+            var sigmaWithWave = Math.Round(Math.Sqrt(sigmaSquere),2);
+            dataGridView1.Rows[9].Cells[2].Value = $"sigma = {sigmaWithWave}";
+
+            double t = 2.045;// ИЗ ТАБЛИЦЫ
+
+            double righteInt = Math.Round(xWithWave + (t * sigmaWithWave) / Math.Sqrt(arr.Length), 2);
+            double leftInt = Math.Round(xWithWave - (t * sigmaWithWave) / Math.Sqrt(arr.Length), 2);
+
+            dataGridView1.Rows[10].Cells[2].Value = $"Du = {leftInt} < x̃ < {righteInt}";
+
+
+            double a1 = (1 - gamma) / 2;
+            double a2 = (1 + gamma) / 2;
+
+            dataGridView1.Rows[11].Cells[2].Value = $"a1 = {a1}; a2 = {a2}";
+
+
+
+            double Xsqe1 = Math.Round(((arr.Length - 1) * sigmaSquere) / 45.7,5); // ВТОРОЙ ИНтерва : левое значение
+            double Xsqe2 = Math.Round(((arr.Length - 1) * sigmaSquere) / 16,5); // ВТОРОЙ ИНтерва : правое значение
+            dataGridView1.Rows[12].Cells[2].Value = $"{Xsqe1} < Sigma с чертой < {Xsqe2}";
+
+
+
+            startInt = 0;
+            endInt = Math.Floor(arr[0]);
+
+            double chastota = niList[0];
+
+            int index = 0;
+
+            for (int i = 0; i < niList.Count(); i++)
+            {
+                if(niList[i] > chastota)
+                {
+                    chastota = niList[i];
+                    index = i;
+                };
+            }
+
+            double nm = chastota;
+            double nmMinus1 = niList[index - 1];
+            double nmPlus1 = niList[index + 1];
+
+            double x0 = 0;
+            for (int i = 0; i < k; i++)
+            {
+                startInt = endInt;
+                endInt += h;
+                ni = CulculateNi(startInt, endInt, arr);
+                if (chastota == ni)
+                {
+                    x0 = startInt;
+                }
+            }
+
+            double Mo = x0 + ((nm - nmMinus1) / (nm - nmMinus1) + (nm - nmPlus1)) * h;
+            dataGridView1.Rows[13].Cells[2].Value = $"Mo = {Mo}";
+
+            double Me = x0 + ((0.5 * arr.Length - nmMinus1) * h) / nm;
+            dataGridView1.Rows[14].Cells[2].Value = $"Me = {Me}";
+
+
+            double M3 = 0;
+            double M4 = 0;
+
+            sigma = 0;
+            xiavg = 0;
+            startInt = 0;
+            endInt = Math.Floor(arr[0]);
+            double sigmaPow3 = sigmaWithWave * sigmaWithWave * sigmaWithWave;
+            double sigmaPow4 = sigmaWithWave * sigmaWithWave * sigmaWithWave * sigmaWithWave;
+
+            for (int i = 0; i < k; i++)
+            {
+                startInt = endInt;
+                endInt += h;
+                ni = CulculateNi(startInt, endInt, arr);
+                xiavg = (startInt + endInt) / 2;
+                sigma = xiavg - xWithWave;
+
+                M3 += ((sigma * sigma * sigma) * ni ) / 30;
+                M4 += ((sigma * sigma * sigma * sigma) * ni) / 30;
+            }
+
+            M3 = Math.Round(M3, 2);
+            sigmaPow3 = Math.Round(sigmaPow3, 2);
+            double A3 = Math.Round(M3 / sigmaPow3, 2);
+            double Ek = Math.Round((M4 / sigmaPow4) - 3, 2);
+
+            dataGridView1.Rows[15].Cells[2].Value = $"Sigma^3 = {sigmaPow3}";
+            dataGridView1.Rows[16].Cells[2].Value = $"M3 = {M3}";
+            dataGridView1.Rows[17].Cells[2].Value = $"A3 = {A3}";
+
+            dataGridView1.Rows[18].Cells[2].Value = $"Sigma^4 = {sigmaPow4}";
+            dataGridView1.Rows[19].Cells[2].Value = $"M4 = {M4}";
+            dataGridView1.Rows[20].Cells[2].Value = $"Ek = {Ek}";
+
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        public double CulculateNi(double startInt , double endInt, double[] arr)
+        {
+            double res=0;
+            for (int i = 0; i < arr.Length; i++)
+            {
+                if(arr[i] >= startInt && arr[i] < endInt)
+                {
+                    res++;
+                }
+            }
+
+            if (endInt == arr[arr.Length - 1])
+            {
+                res++;
+            }
+
+            return res;
+        }
+    }
+}
