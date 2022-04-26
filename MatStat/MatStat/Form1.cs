@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace MatStat
 {
@@ -35,35 +37,34 @@ namespace MatStat
         private void button1_Click(object sender, EventArgs e)
         {
 
-            double[] arr = new double[30]{    10, 10, 11, 11, 11, 12, 13, 14, 14, 15,
-                                        16, 16, 17, 17, 17, 18, 19, 20, 21, 21,
-                                        22, 22, 23, 24, 25, 26, 27, 28, 29, 30  };
+            var lines = File.ReadAllLines($"C:\\Users\\ilya-\\Desktop\\Numbers.csv");
 
+            List<double> arr = new List<double>();
 
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var cells = lines[i].Split(',');
+                arr.Add(double.Parse(cells[3]));
+            }
 
             List<double> niList = new List<double>();
-            int countValue = 30;
+            int countValue = arr.Count();
             double xmax = arr.Max();
             double xmin = arr.Min();
             double k = Math.Floor(1 + 3.322 * Math.Log10(countValue)); //5
             var h = (xmax - xmin) / k; //4
 
 
+            
+
+            
 
 
-            for (int i = 0; i < arr.Length; i++)
-            {
-
-            }
-
-
-
-
-            dataGridView1.Rows.Add(arr.Length);
+            dataGridView1.Rows.Add(arr.Count());
 
 
 
-            for (int i = 0; i < arr.Length; i++)
+            for (int i = 0; i < arr.Count(); i++)
             {
                 dataGridView1.Rows[i].Cells[0].Value = arr[i];
             }
@@ -74,7 +75,13 @@ namespace MatStat
             double ni = 0 ;
             double xWithWave = 0;
             double sigma = 0;
-            double gamma = 0.95; // вводится 
+
+            double gamma = 0.95;
+            if (textBox1.Text != "")
+            {
+                gamma = double.Parse(textBox1.Text); // вводится 
+            }
+            
 
             for (int i = 0; i < k; i++)
             {
@@ -86,9 +93,9 @@ namespace MatStat
                 xWithWave += (xiavg * ni) / 30;
 
 
-                dataGridView1.Rows[i].Cells[1].Value = $"{startInt} - {endInt}"; //интервалы
-                dataGridView1.Rows[i].Cells[2].Value = ni; //n итое
-                dataGridView1.Rows[i].Cells[3].Value = xiavg; // xi сред
+                dataGridView1.Rows[i].Cells[1].Value = $"{ Math.Round(startInt, 2)} - {Math.Round(endInt, 2)}"; //интервалы
+                dataGridView1.Rows[i].Cells[2].Value = Math.Round(ni, 2); //n итое
+                dataGridView1.Rows[i].Cells[3].Value = Math.Round(xiavg, 2); // xi сред
             };
 
             xWithWave = Math.Round(xWithWave, 2);
@@ -102,34 +109,48 @@ namespace MatStat
             double xXx = 0; // хз как назвать
             double sigmaSquere = 0;
 
+
             for (int i = 0; i < k; i++)
             {
                 startInt = endInt;
                 endInt += h;
                 ni = CulculateNi(startInt, endInt, arr);
 
+                niList.Add(ni);
+
                 xiavg = (startInt + endInt) / 2;
 
                 sigma = xiavg - xWithWave;
                 xXx = Math.Round(sigma * sigma, 2);
                 sigmaSquere += (xXx * ni) / 30;
-                dataGridView1.Rows[i].Cells[4].Value = sigma; // sigma
-                dataGridView1.Rows[i].Cells[5].Value = xXx; // sigma
+                dataGridView1.Rows[i].Cells[4].Value = Math.Round(sigma,2); // sigma 
+                dataGridView1.Rows[i].Cells[5].Value = Math.Round(xXx, 2); // sigma
 
 
             }
 
+            var b = xmin;
+
+            for (int j = 0; j < k; j++)
+            {
+                chart1.Series["Gista"].Points.AddXY($"{Math.Round(b, 2)}-{Math.Round(b+h, 2)}", $"{Math.Round(niList[j], 2)}");
+                b += h;
+            }
+
             sigmaSquere = Math.Round(sigmaSquere, 2);
-            dataGridView1.Rows[8].Cells[2].Value = $"sigma^2 = {sigmaSquere}";
+            dataGridView1.Rows[8].Cells[2].Value = $"sigma^2 = {Math.Round(sigmaSquere, 2)}";
             var sigmaWithWave = Math.Round(Math.Sqrt(sigmaSquere),2);
-            dataGridView1.Rows[9].Cells[2].Value = $"sigma = {sigmaWithWave}";
+            dataGridView1.Rows[9].Cells[2].Value = $"sigma = {Math.Round(sigmaWithWave, 2) }";
 
-            double t = 2.045;// ИЗ ТАБЛИЦЫ
+            double t = chart1.DataManipulator.Statistics.InverseTDistribution(gamma, arr.Count()-1);// ИЗ ТАБЛИЦЫ
 
-            double righteInt = Math.Round(xWithWave + (t * sigmaWithWave) / Math.Sqrt(arr.Length), 2);
-            double leftInt = Math.Round(xWithWave - (t * sigmaWithWave) / Math.Sqrt(arr.Length), 2);
+            chart1.Titles.Add($"{t}");
 
-            dataGridView1.Rows[10].Cells[2].Value = $"Du = {leftInt} < x̃ < {righteInt}";
+
+            double righteInt = Math.Round(xWithWave + (t * sigmaWithWave) / Math.Sqrt(arr.Count()), 2);
+            double leftInt = Math.Round(xWithWave - (t * sigmaWithWave) / Math.Sqrt(arr.Count()), 2);
+
+            dataGridView1.Rows[10].Cells[2].Value = $"Du = {Math.Round(leftInt, 2)} < x̃ < {Math.Round(righteInt, 2)}";
 
 
             double a1 = (1 - gamma) / 2;
@@ -139,9 +160,9 @@ namespace MatStat
 
 
 
-            double Xsqe1 = Math.Round(((arr.Length - 1) * sigmaSquere) / 45.7,5); // ВТОРОЙ ИНтерва : левое значение
-            double Xsqe2 = Math.Round(((arr.Length - 1) * sigmaSquere) / 16,5); // ВТОРОЙ ИНтерва : правое значение
-            dataGridView1.Rows[12].Cells[2].Value = $"{Xsqe1} < Sigma с чертой < {Xsqe2}";
+            double Xsqe1 = Math.Round(((arr.Count() - 1) * sigmaSquere) / 45.7,5); // ВТОРОЙ ИНтерва : левое значение
+            double Xsqe2 = Math.Round(((arr.Count() - 1) * sigmaSquere) / 16,5); // ВТОРОЙ ИНтерва : правое значение
+            dataGridView1.Rows[12].Cells[2].Value = $"{Math.Round(Xsqe1, 2)} < Sigma с чертой < {Math.Round(Xsqe2, 2)}";
 
 
 
@@ -161,8 +182,18 @@ namespace MatStat
                 };
             }
 
+
+            double nmMinus1;
             double nm = chastota;
-            double nmMinus1 = niList[index - 1];
+            if(index != 0)
+            {
+                nmMinus1 = niList[index - 1];
+
+            }
+            else
+            {
+                nmMinus1 = 0;
+            }
             double nmPlus1 = niList[index + 1];
 
             double x0 = 0;
@@ -178,10 +209,10 @@ namespace MatStat
             }
 
             double Mo = x0 + ((nm - nmMinus1) / (nm - nmMinus1) + (nm - nmPlus1)) * h;
-            dataGridView1.Rows[13].Cells[2].Value = $"Mo = {Mo}";
+            dataGridView1.Rows[13].Cells[2].Value = $"Mo = {Math.Round(Mo, 2)}";
 
-            double Me = x0 + ((0.5 * arr.Length - nmMinus1) * h) / nm;
-            dataGridView1.Rows[14].Cells[2].Value = $"Me = {Me}";
+            double Me = x0 + ((0.5 * arr.Count() - nmMinus1) * h) / nm;
+            dataGridView1.Rows[14].Cells[2].Value = $"Me = {Math.Round(Me, 2)}";
 
 
             double M3 = 0;
@@ -211,13 +242,17 @@ namespace MatStat
             double A3 = Math.Round(M3 / sigmaPow3, 2);
             double Ek = Math.Round((M4 / sigmaPow4) - 3, 2);
 
-            dataGridView1.Rows[15].Cells[2].Value = $"Sigma^3 = {sigmaPow3}";
-            dataGridView1.Rows[16].Cells[2].Value = $"M3 = {M3}";
-            dataGridView1.Rows[17].Cells[2].Value = $"A3 = {A3}";
+            dataGridView1.Rows[15].Cells[2].Value = $"Sigma^3 = {Math.Round(sigmaPow3, 2)}";
+            dataGridView1.Rows[16].Cells[2].Value = $"M3 = {Math.Round(M3, 2)}";
+            dataGridView1.Rows[17].Cells[2].Value = $"A3 = {Math.Round(A3, 2)}";
 
-            dataGridView1.Rows[18].Cells[2].Value = $"Sigma^4 = {sigmaPow4}";
-            dataGridView1.Rows[19].Cells[2].Value = $"M4 = {M4}";
-            dataGridView1.Rows[20].Cells[2].Value = $"Ek = {Ek}";
+            dataGridView1.Rows[18].Cells[2].Value = $"Sigma^4 = {Math.Round(sigmaPow4, 2)}";
+            dataGridView1.Rows[19].Cells[2].Value = $"M4 = {Math.Round(M4, 2)}";
+            dataGridView1.Rows[20].Cells[2].Value = $"Ek = {Math.Round(Ek, 2)}";
+
+
+            
+
 
         }
 
@@ -231,10 +266,10 @@ namespace MatStat
 
         }
 
-        public double CulculateNi(double startInt , double endInt, double[] arr)
+        public double CulculateNi(double startInt , double endInt, List<double> arr)
         {
             double res=0;
-            for (int i = 0; i < arr.Length; i++)
+            for (int i = 0; i < arr.Count(); i++)
             {
                 if(arr[i] >= startInt && arr[i] < endInt)
                 {
@@ -242,12 +277,33 @@ namespace MatStat
                 }
             }
 
-            if (endInt == arr[arr.Length - 1])
+            if (endInt == arr[arr.Count() - 1])
             {
                 res++;
             }
 
             return res;
+        }
+
+        private void chart1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Controls.Clear();
+            InitializeComponent();
+        }
+
+        private void textBox1_TextChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
