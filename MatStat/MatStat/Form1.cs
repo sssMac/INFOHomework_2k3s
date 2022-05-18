@@ -41,10 +41,13 @@ namespace MatStat
 
             List<double> arr = new List<double>();
 
+
+            int columnNumber = int.Parse(textBox2.Text);
+
             for (int i = 0; i < lines.Length; i++)
             {
                 var cells = lines[i].Split(',');
-                arr.Add(double.Parse(cells[3]));
+                arr.Add(double.Parse(cells[columnNumber]));
             }
 
             List<double> niList = new List<double>();
@@ -76,7 +79,7 @@ namespace MatStat
             double xWithWave = 0;
             double sigma = 0;
 
-            double gamma = 0.95;
+            double gamma = 0.05;
             if (textBox1.Text != "")
             {
                 gamma = double.Parse(textBox1.Text); // вводится 
@@ -90,7 +93,7 @@ namespace MatStat
                 xiavg = (startInt + endInt) / 2;
                 ni = CulculateNi(startInt, endInt, arr);
                 niList.Add(ni);
-                xWithWave += (xiavg * ni) / 30;
+                xWithWave += (xiavg * ni) / arr.Count();
 
 
                 dataGridView1.Rows[i].Cells[1].Value = $"{ Math.Round(startInt, 2)} - {Math.Round(endInt, 2)}"; //интервалы
@@ -302,6 +305,16 @@ namespace MatStat
         }
 
         private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged_1(object sender, EventArgs e)
         {
 
         }
